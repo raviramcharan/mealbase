@@ -9,7 +9,7 @@ import RecipeEditForm from '@/components/RecipeEditForm';
 type Props = { params: { id: string } };
 
 export default async function EditRecipePage({ params }: Props) {
-  // Make the session type explicit so TS knows "user" exists
+  // Make session type explicit so TS knows "user" exists
   const session = (await getServerSession(authOptions as any)) as Session | null;
   if (!session?.user) redirect('/signin');
 
@@ -17,15 +17,23 @@ export default async function EditRecipePage({ params }: Props) {
   if (!uid) redirect('/signin');
 
   await dbConnect();
-  const r = await Recipe.findById(params.id).lean();
-  if (!r) return <div className="container-narrow">Not found</div>;
-  if (String(r.ownerId) !== String(uid)) return <div className="container-narrow">Not authorized</div>;
+
+  // Fetch only what's needed for ownership check and narrow the type
+  type OwnerOnly = { _id: unknown; ownerId?: unknown } | null;
+  const doc = (await Recipe.findById(params.id)
+    .select({ ownerId: 1, _id: 1 })
+    .lean()) as OwnerOnly;
+
+  if (!doc) return <div className="container-narrow">Not found</div>;
+  if (String(doc.ownerId ?? '') !== String(uid)) {
+    return <div className="container-narrow">Not authorized</div>;
+  }
 
   return (
     <div className="container-narrow">
       <h1 className="text-3xl font-extrabold mb-4">Edit recipe</h1>
       <div className="card max-w-3xl mx-auto p-6">
-        <RecipeEditForm id={String(r._id)} />
+        <RecipeEditForm id={String(doc._id)} />
       </div>
     </div>
   );
