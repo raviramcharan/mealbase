@@ -2,19 +2,21 @@ import { getServerSession } from 'next-auth';
 import type { Session } from 'next-auth';
 import authOptions from '@/lib/authOptions';
 import { dbConnect } from '@/lib/mongodb';
-import User, { type UserDoc } from '@/models/User';
+import User from '@/models/User';
+
+// Narrow type for what we read from Mongo in this route.
+type ProfileLean = { name?: string } | null;
 
 export async function GET() {
   const session = (await getServerSession(authOptions as any)) as Session | null;
-  if (!session?.user?.email) {
-    return new Response('Unauthorized', { status: 401 });
-  }
+  if (!session?.user?.email) return new Response('Unauthorized', { status: 401 });
 
   await dbConnect();
 
-  // Make the return type explicit so TS knows "name" exists.
-  const u = (await User.findOne({ email: session.user.email }).lean()) as UserDoc | null;
-  // Alternatively (both work): .lean<UserDoc>()
+  // Select only "name" so TS is crystal-clear about the shape.
+  const u = (await User.findOne({ email: session.user.email })
+    .select({ name: 1, _id: 0 })
+    .lean()) as ProfileLean;
 
   return new Response(
     JSON.stringify({ name: u?.name ?? '' }),
@@ -24,9 +26,7 @@ export async function GET() {
 
 export async function PUT(req: Request) {
   const session = (await getServerSession(authOptions as any)) as Session | null;
-  if (!session?.user?.email) {
-    return new Response('Unauthorized', { status: 401 });
-  }
+  if (!session?.user?.email) return new Response('Unauthorized', { status: 401 });
 
   const { name } = (await req.json()) as { name?: string };
 
