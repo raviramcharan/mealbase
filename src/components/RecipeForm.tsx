@@ -62,7 +62,6 @@ export default function RecipeForm() {
       <div className="min-w-0">
         <label>Image</label>
         <input type="file" className="block w-full max-w-full min-w-0" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
-        <div className="help">Optional. Uploaded to Cloudinary.</div>
       </div>
       <div className="min-w-0">
         <label>Title</label>
