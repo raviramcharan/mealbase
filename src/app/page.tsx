@@ -1,44 +1,73 @@
-import { getServerSession } from 'next-auth';
-import type { Session } from 'next-auth';
-import authOptions from '@/lib/authOptions';
-import { redirect } from 'next/navigation';
 import { dbConnect } from '@/lib/mongodb';
-import User from '@/models/User';
-import Recipe from '@/models/Recipe';
+import RecipeModel from '@/models/Recipe';
 import RecipeCard from '@/components/RecipeCard';
 
-type WishlistLean = { wishlist?: string[] } | null;
+export const dynamic = 'force-dynamic';
+const PAGE_SIZE = 12;
 
-export default async function WishlistPage() {
-  // Make the session type explicit so TS knows about "user"
-  const session = (await getServerSession(authOptions as any)) as Session | null;
-  if (!session?.user?.email) redirect('/signin');
+function normalize<T>(v: T | T[] | undefined, d: T): T {
+  if (!v) return d;
+  return Array.isArray(v) ? v[0] : v;
+}
 
+export default async function Page({ searchParams }: { searchParams: Record<string, string | string[] | undefined> }) {
   await dbConnect();
+  const q = normalize(searchParams.q, '').trim();
+  const page = Math.max(1, parseInt(normalize(searchParams.page, '1')) || 1);
+  const sortKey = normalize(searchParams.sort, 'new'); // new | time | title
 
-  // Read just the wishlist and assert a lean type so TS knows it exists
-  const me = (await User.findOne({ email: session.user.email })
-    .select({ wishlist: 1, _id: 0 })
-    .lean()) as WishlistLean;
+  const where = q ? {
+    $or: [
+      { title: { $regex: q, $options: 'i' } },
+      { ingredients: { $elemMatch: { $regex: q, $options: 'i' } } },
+      { requirements: { $elemMatch: { $regex: q, $options: 'i' } } },
+      { tags: { $elemMatch: { $regex: q, $options: 'i' } } }
+    ]
+  } : {};
 
-  const ids = (me?.wishlist ?? []).map(String);
-
-  const recipes = await Recipe.find({ _id: { $in: ids } }).lean();
+  const sortMap: any = {
+    new: { createdAt: -1 },
+    time: { prepTimeMinutes: 1 },
+    title: { title: 1 },
+  };
+  const total = await RecipeModel.countDocuments(where);
+  const items = await RecipeModel.find(where).sort(sortMap[sortKey] || sortMap.new).skip((page-1)*PAGE_SIZE).limit(PAGE_SIZE).lean();
+  const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
-    <div className="container-narrow">
-      <h1 className="text-3xl font-extrabold mb-4">Wishlist</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-4">
-        {recipes.map((r: any) => (
-          <RecipeCard
-            key={String(r._id)}
-            id={String(r._id)}
-            title={r.title}
-            imageUrl={r.imageUrl}
-            prepTimeMinutes={r.prepTimeMinutes}
-            tags={r.tags || []}
-          />
+    <div>
+      <section className="relative w-full overflow-hidden bg-white">
+        <div className="absolute inset-0 bg-[url('https://res.cloudinary.com/dkekdqp99/image/upload/v1759318239/background-pattern_bhlvje.jpg')] bg-cover bg-center opacity-20" />
+        <div className="relative container-narrow py-16 grid gap-4 max-w-3xl">
+          <h1 className="text-5xl font-extrabold leading-tight">Your Personal Recipe Collection</h1>
+          <p className="text-slate-600">Store, organize, and share your favorite recipes. Track nutrition and never lose a recipe again.</p>
+          <form className="flex gap-2" action="/" method="get">
+            <input className="flex-1 input border border-slate-200 rounded-xl px-3 py-2" type="search" name="q" placeholder="Search recipes, ingredients or #tags…" defaultValue={q} />
+            <input type="hidden" name="sort" value={sortKey} />
+            <button className="btn" type="submit">Start Cooking</button>
+            <a className="btn btn-secondary" href="#explore">Learn More</a>
+          </form>
+          <div className="flex items-center gap-3 pt-2">
+            <label className="text-sm text-slate-600">Sort:</label>
+            <a className={`chip ${sortKey==='new'?'bg-yellow-50 border-yellow-200':''}`} href={`/?q=${encodeURIComponent(q)}&sort=new`}>Newest</a>
+            <a className={`chip ${sortKey==='time'?'bg-yellow-50 border-yellow-200':''}`} href={`/?q=${encodeURIComponent(q)}&sort=time`}>Time ↑</a>
+            <a className={`chip ${sortKey==='title'?'bg-yellow-50 border-yellow-200':''}`} href={`/?q=${encodeURIComponent(q)}&sort=title`}>Title A–Z</a>
+          </div>
+        </div>
+      </section>
+
+      <section className="container-narrow grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-6" id="explore">
+        {items.map((r: any) => (
+          <RecipeCard key={String(r._id)} id={String(r._id)} title={r.title} imageUrl={r.imageUrl} prepTimeMinutes={r.prepTimeMinutes} tags={r.tags || []} />
         ))}
+      </section>
+
+      <div className="container-narrow flex items-center justify-between mt-6">
+        <div className="text-sm text-slate-600">Showing {(page-1)*PAGE_SIZE + 1}–{Math.min(page*PAGE_SIZE, total)} of {total}</div>
+        <div className="flex gap-2">
+          <a className={`btn btn-secondary ${page<=1?'pointer-events-none opacity-50':''}`} href={`/?q=${encodeURIComponent(q)}&sort=${sortKey}&page=${page-1}`}>Prev</a>
+          <a className={`btn btn-secondary ${page>=pages?'pointer-events-none opacity-50':''}`} href={`/?q=${encodeURIComponent(q)}&sort=${sortKey}&page=${page+1}`}>Next</a>
+        </div>
       </div>
     </div>
   );
