@@ -39,18 +39,18 @@ export default async function Page({ searchParams }: { searchParams: Record<stri
       <section className="relative w-full overflow-hidden bg-white">
         <div className="absolute inset-0 bg-[url('https://res.cloudinary.com/dkekdqp99/image/upload/v1759318239/background-pattern_bhlvje.jpg')] bg-cover bg-center opacity-20" />
         <div className="relative container-narrow py-16 grid gap-4 max-w-3xl">
-          <h1 className="text-5xl font-extrabold leading-tight">Your Personal Recipe Collection</h1>
-          <p className="text-slate-600">Store, organize, and share your favorite recipes. Track nutrition and never lose a recipe again.</p>
+          <h1 className="text-5xl font-extrabold leading-tight">De enige echte kippieboek!</h1>
+          <p className="text-slate-600">Voeg je favoriete recepten toe zodat je ze nooit meer kwijtraakt!</p>
           <form className="flex gap-2 flex-col md:flex-row" action="/" method="get">
             <input className="flex-1 input border border-slate-200 rounded-xl px-3 py-2" type="search" name="q" placeholder="Search recipes, ingredients or #tags…" defaultValue={q} />
             <input type="hidden" name="sort" value={sortKey} />
-            <button className="btn justify-center" type="submit">Start Cooking</button>
+            <button className="btn justify-center" type="submit">Zoeken</button>
           </form>
           <div className="flex items-center gap-3 pt-2">
             <label className="text-sm text-slate-600">Sort:</label>
-            <a className={`chip ${sortKey==='new'?'bg-yellow-50 border-yellow-200':''}`} href={`/?q=${encodeURIComponent(q)}&sort=new`}>Newest</a>
-            <a className={`chip ${sortKey==='time'?'bg-yellow-50 border-yellow-200':''}`} href={`/?q=${encodeURIComponent(q)}&sort=time`}>Time ↑</a>
-            <a className={`chip ${sortKey==='title'?'bg-yellow-50 border-yellow-200':''}`} href={`/?q=${encodeURIComponent(q)}&sort=title`}>Title A–Z</a>
+            <a className={`chip ${sortKey==='new'?'bg-yellow-50 border-yellow-200':''}`} href={`/?q=${encodeURIComponent(q)}&sort=new`}>Nieuwste</a>
+            <a className={`chip ${sortKey==='time'?'bg-yellow-50 border-yellow-200':''}`} href={`/?q=${encodeURIComponent(q)}&sort=time`}>Tijd ↑</a>
+            <a className={`chip ${sortKey==='title'?'bg-yellow-50 border-yellow-200':''}`} href={`/?q=${encodeURIComponent(q)}&sort=title`}>Titel A–Z</a>
           </div>
         </div>
       </section>
@@ -62,10 +62,10 @@ export default async function Page({ searchParams }: { searchParams: Record<stri
       </section>
 
       <div className="container-narrow flex items-center justify-between mt-6">
-        <div className="text-sm text-slate-600">Showing {(page-1)*PAGE_SIZE + 1}–{Math.min(page*PAGE_SIZE, total)} of {total}</div>
+        <div className="text-sm text-slate-600">Toon {(page-1)*PAGE_SIZE + 1}–{Math.min(page*PAGE_SIZE, total)} van {total}</div>
         <div className="flex gap-2">
-          <a className={`btn btn-secondary ${page<=1?'pointer-events-none opacity-50':''}`} href={`/?q=${encodeURIComponent(q)}&sort=${sortKey}&page=${page-1}`}>Prev</a>
-          <a className={`btn btn-secondary ${page>=pages?'pointer-events-none opacity-50':''}`} href={`/?q=${encodeURIComponent(q)}&sort=${sortKey}&page=${page+1}`}>Next</a>
+          <a className={`btn btn-secondary ${page<=1?'pointer-events-none opacity-50':''}`} href={`/?q=${encodeURIComponent(q)}&sort=${sortKey}&page=${page-1}`}>Vorige</a>
+          <a className={`btn btn-secondary ${page>=pages?'pointer-events-none opacity-50':''}`} href={`/?q=${encodeURIComponent(q)}&sort=${sortKey}&page=${page+1}`}>Volgende</a>
         </div>
       </div>
     </div>
