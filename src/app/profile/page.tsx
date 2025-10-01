@@ -27,7 +27,7 @@ export default async function ProfilePage() {
       <ProfileForm email={email} />
 
       <h3 className="text-xl font-semibold mt-6">My recipes</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-3">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-3">
         {mine.map((r: any) => (
           <RecipeCard
             key={String(r._id)}
