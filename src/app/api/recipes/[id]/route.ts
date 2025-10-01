@@ -20,9 +20,15 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   if (!uid) return new Response('Unauthorized', { status: 401 });
 
   await dbConnect();
-  const existing = await Recipe.findById(params.id).lean();
+
+  // Only fetch what we need for the ownership check; type it explicitly.
+  type OwnerOnly = { ownerId?: unknown } | null;
+  const existing = (await Recipe.findById(params.id)
+    .select({ ownerId: 1 })
+    .lean()) as OwnerOnly;
+
   if (!existing) return new Response('Not found', { status: 404 });
-  if (String(existing.ownerId) !== String(uid)) {
+  if (String(existing.ownerId ?? '') !== String(uid)) {
     return new Response('Forbidden', { status: 403 });
   }
 
@@ -42,9 +48,15 @@ export async function DELETE(_req: Request, { params }: { params: { id: string }
   if (!uid) return new Response('Unauthorized', { status: 401 });
 
   await dbConnect();
-  const existing = await Recipe.findById(params.id).lean();
+
+  // Same explicit type for the ownership check.
+  type OwnerOnly = { ownerId?: unknown } | null;
+  const existing = (await Recipe.findById(params.id)
+    .select({ ownerId: 1 })
+    .lean()) as OwnerOnly;
+
   if (!existing) return new Response('Not found', { status: 404 });
-  if (String(existing.ownerId) !== String(uid)) {
+  if (String(existing.ownerId ?? '') !== String(uid)) {
     return new Response('Forbidden', { status: 403 });
   }
 
