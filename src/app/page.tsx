@@ -41,7 +41,7 @@ export default async function Page({ searchParams }: { searchParams: Record<stri
         <div className="relative container-narrow py-16 grid gap-4 max-w-3xl">
           <h1 className="text-5xl font-extrabold leading-tight">Your Personal Recipe Collection</h1>
           <p className="text-slate-600">Store, organize, and share your favorite recipes. Track nutrition and never lose a recipe again.</p>
-          <form className="flex gap-2 sm:flex-col md:flex-row" action="/" method="get">
+          <form className="flex gap-2 flex-col md:flex-row" action="/" method="get">
             <input className="flex-1 input border border-slate-200 rounded-xl px-3 py-2" type="search" name="q" placeholder="Search recipes, ingredients or #tags…" defaultValue={q} />
             <input type="hidden" name="sort" value={sortKey} />
             <button className="btn justify-center" type="submit">Start Cooking</button>
