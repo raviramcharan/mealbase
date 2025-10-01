@@ -198,7 +198,6 @@ export default function RecipeEditForm({ id }: { id: string }) {
         <input
           type="file"
           accept="image/*"
-          capture="environment"
           onChange={onFileChange}
           className="block w-full max-w-full min-w-0 text-sm form-input
                      file:mr-3 file:rounded-lg file:border-0 file:bg-slate-100

@@ -75,7 +75,6 @@ export default function RecipeForm() {
     });
     const data = await up.json();
     if (!up.ok || !data.secure_url) {
-      // data.error?.message contains Cloudinary error details
       throw new Error(data?.error?.message || 'Image upload failed');
     }
     return data.secure_url as string;
@@ -153,7 +152,6 @@ export default function RecipeForm() {
         <input
           type="file"
           accept="image/*"
-          capture="environment"
           onChange={onFileChange}
           className="block w-full max-w-full min-w-0 text-sm form-input
                      file:mr-3 file:rounded-lg file:border-0 file:bg-slate-100
