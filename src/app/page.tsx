@@ -10,11 +10,13 @@ import RecipeCard from '@/components/RecipeCard';
 type WishlistLean = { wishlist?: string[] } | null;
 
 export default async function WishlistPage() {
+  // Make the session type explicit so TS knows about "user"
   const session = (await getServerSession(authOptions as any)) as Session | null;
   if (!session?.user?.email) redirect('/signin');
 
   await dbConnect();
 
+  // Read just the wishlist and assert a lean type so TS knows it exists
   const me = (await User.findOne({ email: session.user.email })
     .select({ wishlist: 1, _id: 0 })
     .lean()) as WishlistLean;
