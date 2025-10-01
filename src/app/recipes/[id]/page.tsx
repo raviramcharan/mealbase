@@ -44,9 +44,9 @@ export default async function RecipePage({ params }: Props) {
   const canEdit = !!uid && String(uid) === String(r.ownerId ?? '');
 
   return (
-    <article className="container-narrow">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-extrabold mb-2">
+    <article className="container-narrow mt-8">
+      <div className="flex items-start md:items-center mb-4 justify-start md:justify-between gap-2 md:gap-0 flex-col md:flex-row">
+        <h1 className="text-3xl gap-4 font-extrabold mb-2 flex justify-between w-full md:w-auto items-center">
           {r.title} <span className="badge">⏱ {r.prepTimeMinutes} min</span>
         </h1>
 
