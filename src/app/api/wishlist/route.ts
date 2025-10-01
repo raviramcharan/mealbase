@@ -4,22 +4,29 @@ import authOptions from '@/lib/authOptions';
 import { dbConnect } from '@/lib/mongodb';
 import User from '@/models/User';
 
+// Explicit lean shape so TS knows about "wishlist"
+type WishlistLean = { wishlist?: string[] } | null;
+
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const recipeId = searchParams.get('recipeId');
 
   const session = (await getServerSession(authOptions as any)) as Session | null;
 
-  // Keep this safe for unauthenticated users — simply return false.
-  if (!session?.user?.email || !recipeId) {
+  // Safe default for guests or missing id
+  if (!recipeId || !session?.user?.email) {
     return new Response(JSON.stringify({ inWishlist: false }), {
       headers: { 'Content-Type': 'application/json' },
     });
   }
 
   await dbConnect();
-  const me = await User.findOne({ email: session.user.email }).lean();
-  const inWishlist = Boolean(me?.wishlist?.includes(String(recipeId)));
+
+  const me = (await User.findOne({ email: session.user.email })
+    .select({ wishlist: 1, _id: 0 })
+    .lean()) as WishlistLean;
+
+  const inWishlist = !!me?.wishlist?.includes(String(recipeId));
 
   return new Response(JSON.stringify({ inWishlist }), {
     headers: { 'Content-Type': 'application/json' },
@@ -35,8 +42,11 @@ export async function POST(req: Request) {
 
   await dbConnect();
 
-  const me = await User.findOne({ email: session.user.email }).lean();
-  const has = Boolean(me?.wishlist?.includes(String(recipeId)));
+  const me = (await User.findOne({ email: session.user.email })
+    .select({ wishlist: 1, _id: 0 })
+    .lean()) as WishlistLean;
+
+  const has = !!me?.wishlist?.includes(String(recipeId));
 
   if (has) {
     await User.updateOne(
