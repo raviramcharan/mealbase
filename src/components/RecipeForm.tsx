@@ -3,11 +3,11 @@
 import { useState, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 
-type Nutrition = {
-  calories: number;
-  protein: number;
-  carbs: number;
-  fats: number;
+type NutritionForm = {
+  calories: string;
+  protein: string;
+  carbs: string;
+  fats: string;
 };
 
 export default function RecipeForm() {
@@ -16,19 +16,20 @@ export default function RecipeForm() {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
 
-  const [title, setTitle] = useState('');
-  const [prepTime, setPrepTime] = useState<string>('15');
-  const [tags, setTags] = useState<string>('vegan, quick, low-carb');
+  const [title, setTitle] = useState<string>('');
+  const [prepTime, setPrepTime] = useState<string>('');     // empty
+  const [tags, setTags] = useState<string>('');             // empty
 
-  const [requirements, setRequirements] = useState('');
-  const [ingredients, setIngredients] = useState('');
-  const [instructions, setInstructions] = useState('');
+  const [requirements, setRequirements] = useState<string>(''); // empty
+  const [ingredients, setIngredients] = useState<string>('');   // empty
+  const [instructions, setInstructions] = useState<string>(''); // empty
 
-  const [nutrition, setNutrition] = useState<Nutrition>({
-    calories: 500,
-    protein: 30,
-    carbs: 40,
-    fats: 20,
+  // keep as strings so inputs can be empty; convert to numbers on submit
+  const [nutrition, setNutrition] = useState<NutritionForm>({
+    calories: '',
+    protein: '',
+    carbs: '',
+    fats: '',
   });
 
   const [busy, setBusy] = useState(false);
@@ -39,8 +40,7 @@ export default function RecipeForm() {
     setFile(f);
     if (f) {
       try {
-        const url = URL.createObjectURL(f);
-        setPreview(url);
+        setPreview(URL.createObjectURL(f));
       } catch {
         setPreview(null);
       }
@@ -50,18 +50,17 @@ export default function RecipeForm() {
   }
 
   async function uploadDirectToCloudinary(f: File): Promise<string> {
-    // 1) Ask our server for a short-lived signature
+    // 1) ask server for signature
     const sigRes = await fetch('/api/cloudinary/sign', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({}), // server uses default folder from env
+      body: JSON.stringify({}),
     });
-    if (!sigRes.ok) {
-      throw new Error('Could not prepare image upload');
-    }
+    if (!sigRes.ok) throw new Error('Could not prepare image upload');
+
     const { timestamp, signature, apiKey, cloudName, folder } = await sigRes.json();
 
-    // 2) Send the actual file straight to Cloudinary
+    // 2) direct upload to Cloudinary
     const fd = new FormData();
     fd.append('file', f);
     fd.append('api_key', apiKey);
@@ -86,13 +85,11 @@ export default function RecipeForm() {
     setError(null);
 
     try {
-      // Upload image first (if present)
       let imageUrl: string | undefined;
       if (file) {
         imageUrl = await uploadDirectToCloudinary(file);
       }
 
-      // Prepare payload
       const payload = {
         title: title.trim(),
         prepTimeMinutes: Number(prepTime) || 0,
@@ -118,20 +115,14 @@ export default function RecipeForm() {
         imageUrl,
       };
 
-      if (!payload.title) {
-        throw new Error('Please enter a title');
-      }
+      if (!payload.title) throw new Error('Please enter a title');
 
       const res = await fetch('/api/recipes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text || 'Failed to create recipe');
-      }
+      if (!res.ok) throw new Error((await res.text()) || 'Failed to create recipe');
 
       const created = await res.json();
       const id = String(created?._id || '');
@@ -241,7 +232,7 @@ Salt"
             type="number"
             min={0}
             value={nutrition.calories}
-            onChange={(e) => setNutrition({ ...nutrition, calories: Number(e.target.value) })}
+            onChange={(e) => setNutrition({ ...nutrition, calories: e.target.value })}
             placeholder="500"
           />
         </div>
@@ -252,7 +243,7 @@ Salt"
             type="number"
             min={0}
             value={nutrition.protein}
-            onChange={(e) => setNutrition({ ...nutrition, protein: Number(e.target.value) })}
+            onChange={(e) => setNutrition({ ...nutrition, protein: e.target.value })}
             placeholder="30"
           />
         </div>
@@ -263,7 +254,7 @@ Salt"
             type="number"
             min={0}
             value={nutrition.carbs}
-            onChange={(e) => setNutrition({ ...nutrition, carbs: Number(e.target.value) })}
+            onChange={(e) => setNutrition({ ...nutrition, carbs: e.target.value })}
             placeholder="40"
           />
         </div>
@@ -274,7 +265,7 @@ Salt"
             type="number"
             min={0}
             value={nutrition.fats}
-            onChange={(e) => setNutrition({ ...nutrition, fats: Number(e.target.value) })}
+            onChange={(e) => setNutrition({ ...nutrition, fats: e.target.value })}
             placeholder="20"
           />
         </div>
