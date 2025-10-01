@@ -42,7 +42,10 @@ export default function RecipeEditForm({ id }: { id: string }) {
   const [instructions, setInstructions] = useState('');
 
   const [nutrition, setNutrition] = useState<Nutrition>({
-    calories: 0, protein: 0, carbs: 0, fats: 0,
+    calories: 0,
+    protein: 0,
+    carbs: 0,
+    fats: 0,
   });
 
   const [busy, setBusy] = useState(false);
@@ -67,9 +70,9 @@ export default function RecipeEditForm({ id }: { id: string }) {
         setInstructions(r.instructions ?? '');
         setNutrition({
           calories: r.nutrition?.calories ?? 0,
-          protein:  r.nutrition?.protein  ?? 0,
-          carbs:    r.nutrition?.carbs    ?? 0,
-          fats:     r.nutrition?.fats     ?? 0,
+          protein: r.nutrition?.protein ?? 0,
+          carbs: r.nutrition?.carbs ?? 0,
+          fats: r.nutrition?.fats ?? 0,
         });
         setPreview(r.imageUrl || null);
       } catch (e: any) {
@@ -78,15 +81,21 @@ export default function RecipeEditForm({ id }: { id: string }) {
         setLoading(false);
       }
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [id]);
 
   function onFileChange(e: ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0] ?? null;
     setFile(f);
-    try {
-      setPreview(f ? URL.createObjectURL(f) : existing?.imageUrl ?? null);
-    } catch {
+    if (f) {
+      try {
+        setPreview(URL.createObjectURL(f));
+      } catch {
+        setPreview(existing?.imageUrl ?? null);
+      }
+    } else {
       setPreview(existing?.imageUrl ?? null);
     }
   }
@@ -137,15 +146,24 @@ export default function RecipeEditForm({ id }: { id: string }) {
       const payload = {
         title: title.trim(),
         prepTimeMinutes: Number(prepTime) || 0,
-        tags: tags.split(',').map(t => t.trim()).filter(Boolean),
-        requirements: requirements.split('\n').map(t => t.trim()).filter(Boolean),
-        ingredients: ingredients.split('\n').map(t => t.trim()).filter(Boolean),
+        tags: tags
+          .split(',')
+          .map((t) => t.trim())
+          .filter(Boolean),
+        requirements: requirements
+          .split('\n')
+          .map((t) => t.trim())
+          .filter(Boolean),
+        ingredients: ingredients
+          .split('\n')
+          .map((t) => t.trim())
+          .filter(Boolean),
         instructions: instructions.trim(),
         nutrition: {
           calories: Number(nutrition.calories) || 0,
-          protein:  Number(nutrition.protein)  || 0,
-          carbs:    Number(nutrition.carbs)    || 0,
-          fats:     Number(nutrition.fats)     || 0,
+          protein: Number(nutrition.protein) || 0,
+          carbs: Number(nutrition.carbs) || 0,
+          fats: Number(nutrition.fats) || 0,
         },
         imageUrl,
       };
@@ -242,9 +260,7 @@ export default function RecipeEditForm({ id }: { id: string }) {
           className="form-textarea h-28"
           value={requirements}
           onChange={(e) => setRequirements(e.target.value)}
-          placeholder="Oven
-Baking dish
-Knife"
+          placeholder={'Oven\nBaking dish\nKnife'}
         />
       </div>
 
@@ -255,9 +271,7 @@ Knife"
           className="form-textarea h-32"
           value={ingredients}
           onChange={(e) => setIngredients(e.target.value)}
-          placeholder="200g pasta
-2 tomatoes
-Salt"
+          placeholder={'200g pasta\n2 tomatoes\nSalt'}
         />
       </div>
 
@@ -280,4 +294,52 @@ Salt"
             type="number"
             min={0}
             value={nutrition.protein}
-            onChange={(e) => setNutrition({ ...nutrition, pro
+            onChange={(e) => setNutrition({ ...nutrition, protein: Number(e.target.value) })}
+          />
+        </div>
+        <div className="min-w-0">
+          <label className="block text-sm font-medium mb-1">Carbs (g)</label>
+          <input
+            className="form-input"
+            type="number"
+            min={0}
+            value={nutrition.carbs}
+            onChange={(e) => setNutrition({ ...nutrition, carbs: Number(e.target.value) })}
+          />
+        </div>
+        <div className="min-w-0">
+          <label className="block text-sm font-medium mb-1">Fats (g)</label>
+          <input
+            className="form-input"
+            type="number"
+            min={0}
+            value={nutrition.fats}
+            onChange={(e) => setNutrition({ ...nutrition, fats: Number(e.target.value) })}
+          />
+        </div>
+      </div>
+
+      {/* Instructions */}
+      <div className="min-w-0">
+        <label className="block text-sm font-medium mb-1">Instructions</label>
+        <textarea
+          className="form-textarea h-40"
+          value={instructions}
+          onChange={(e) => setInstructions(e.target.value)}
+          placeholder={'1) Preheat oven to 180°C\n2) Mix everything\n3) Bake 20 minutes'}
+        />
+      </div>
+
+      {error ? <p className="text-sm text-red-600">{error}</p> : null}
+
+      <div className="flex items-center justify-end gap-2">
+        <button className="btn btn-secondary" type="button" onClick={() => router.back()} disabled={busy}>
+          Cancel
+        </button>
+        <button className="btn" type="submit" disabled={busy}>
+          {busy ? 'Saving…' : 'Save changes'}
+        </button>
+      </div>
+    </form>
+  );
+}
