@@ -70,7 +70,7 @@ export default function RecipeForm() {
       </div>
       <div className="min-w-0">
         <label>Required time (minutes)</label>
-        <input className="form-input block w-full max-w-full min-w-0" type="number" value={prepTime} onChange={e=>setPrepTime(e.target.value ? Number(e.target.value) : '')} required />
+        <input className="form-input block w-full max-w-full min-w-0" type="number" value={prepTime} onChange={e=>setPrepTime(e.target.value ? Number(e.target.value) : '')} />
       </div>
       <div className="min-w-0">
         <label>Tags (comma separated)</label>
@@ -93,19 +93,19 @@ export default function RecipeForm() {
       <div className="grid md:grid-cols-2 gap-3 min-w-0">
         <div className="min-w-0">
           <label>Calories</label>
-          <input className="form-input block w-full max-w-full min-w-0" type="number" value={calories} onChange={e=>setCalories(e.target.value ? Number(e.target.value) : '')} required />
+          <input className="form-input block w-full max-w-full min-w-0" type="number" value={calories} onChange={e=>setCalories(e.target.value ? Number(e.target.value) : '')} />
         </div>
         <div className="min-w-0">
           <label>Protein (g)</label>
-          <input className="form-input block w-full max-w-full min-w-0" type="number" value={protein} onChange={e=>setProtein(e.target.value ? Number(e.target.value) : '')} required />
+          <input className="form-input block w-full max-w-full min-w-0" type="number" value={protein} onChange={e=>setProtein(e.target.value ? Number(e.target.value) : '')} />
         </div>
         <div className="min-w-0">
           <label>Carbs (g)</label>
-          <input className="form-input block w-full max-w-full min-w-0" type="number" value={carbs} onChange={e=>setCarbs(e.target.value ? Number(e.target.value) : '')} required />
+          <input className="form-input block w-full max-w-full min-w-0" type="number" value={carbs} onChange={e=>setCarbs(e.target.value ? Number(e.target.value) : '')} />
         </div>
         <div className="min-w-0">
           <label>Fats (g)</label>
-          <input className="form-input block w-full max-w-full min-w-0" type="number" value={fats} onChange={e=>setFats(e.target.value ? Number(e.target.value) : '')} required />
+          <input className="form-input block w-full max-w-full min-w-0" type="number" value={fats} onChange={e=>setFats(e.target.value ? Number(e.target.value) : '')} />
         </div>
       </div>
       <div className="min-w-0">
