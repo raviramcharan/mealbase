@@ -58,57 +58,57 @@ export default function RecipeForm() {
   }
 
   return (
-    <form className="grid gap-3" onSubmit={handleSubmit}>
-      <div>
+    <form className="grid gap-3 min-w-0" onSubmit={handleSubmit}>
+      <div className="min-w-0">
         <label>Image</label>
-        <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
+        <input type="file" className="block w-full max-w-full min-w-0" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
         <div className="help">Optional. Uploaded to Cloudinary.</div>
       </div>
-      <div>
+      <div className="min-w-0">
         <label>Title</label>
-        <input className="form-input" value={title} onChange={e=>setTitle(e.target.value)} required />
+        <input className="form-input block w-full max-w-full min-w-0" value={title} onChange={e=>setTitle(e.target.value)} required />
       </div>
-      <div>
+      <div className="min-w-0">
         <label>Required time (minutes)</label>
-        <input className="form-input" type="number" value={prepTime} onChange={e=>setPrepTime(e.target.value ? Number(e.target.value) : '')} required />
+        <input className="form-input block w-full max-w-full min-w-0" type="number" value={prepTime} onChange={e=>setPrepTime(e.target.value ? Number(e.target.value) : '')} required />
       </div>
-      <div>
+      <div className="min-w-0">
         <label>Tags (comma separated)</label>
-        <input className="form-input" placeholder="vegan, quick, low-carb" value={tags} onChange={e=>setTags(e.target.value)} />
+        <input className="form-input block w-full max-w-full min-w-0" placeholder="vegan, quick, low-carb" value={tags} onChange={e=>setTags(e.target.value)} />
       </div>
-      <div className="grid md:grid-cols-2 gap-3">
-        <div>
+      <div className="grid md:grid-cols-2 gap-3 min-w-0">
+        <div className="min-w-0">
           <label>Requirements (one per line)</label>
-          <textarea className="form-textarea" rows={6} value={requirements} onChange={e=>setReqs(e.target.value)} />
+          <textarea className="form-textarea block w-full max-w-full min-w-0" rows={6} value={requirements} onChange={e=>setReqs(e.target.value)} />
         </div>
-        <div>
+        <div className="min-w-0">
           <label>Ingredients (one per line)</label>
-          <textarea className="form-textarea" rows={6} value={ingredients} onChange={e=>setIngr(e.target.value)} />
+          <textarea className="form-textarea block w-full max-w-full min-w-0" rows={6} value={ingredients} onChange={e=>setIngr(e.target.value)} />
         </div>
       </div>
-      <div>
+      <div className="min-w-0">
         <label>Instructions</label>
-        <textarea className="form-textarea" rows={8} value={instructions} onChange={e=>setInstr(e.target.value)} />
+        <textarea className="form-textarea block w-full max-w-full min-w-0" rows={8} value={instructions} onChange={e=>setInstr(e.target.value)} />
       </div>
-      <div className="grid md:grid-cols-2 gap-3">
-        <div>
+      <div className="grid md:grid-cols-2 gap-3 min-w-0">
+        <div className="min-w-0">
           <label>Calories</label>
-          <input className="form-input" type="number" value={calories} onChange={e=>setCalories(e.target.value ? Number(e.target.value) : '')} required />
+          <input className="form-input block w-full max-w-full min-w-0" type="number" value={calories} onChange={e=>setCalories(e.target.value ? Number(e.target.value) : '')} required />
         </div>
-        <div>
+        <div className="min-w-0">
           <label>Protein (g)</label>
-          <input className="form-input" type="number" value={protein} onChange={e=>setProtein(e.target.value ? Number(e.target.value) : '')} required />
+          <input className="form-input block w-full max-w-full min-w-0" type="number" value={protein} onChange={e=>setProtein(e.target.value ? Number(e.target.value) : '')} required />
         </div>
-        <div>
+        <div className="min-w-0">
           <label>Carbs (g)</label>
-          <input className="form-input" type="number" value={carbs} onChange={e=>setCarbs(e.target.value ? Number(e.target.value) : '')} required />
+          <input className="form-input block w-full max-w-full min-w-0" type="number" value={carbs} onChange={e=>setCarbs(e.target.value ? Number(e.target.value) : '')} required />
         </div>
-        <div>
+        <div className="min-w-0">
           <label>Fats (g)</label>
-          <input className="form-input" type="number" value={fats} onChange={e=>setFats(e.target.value ? Number(e.target.value) : '')} required />
+          <input className="form-input block w-full max-w-full min-w-0" type="number" value={fats} onChange={e=>setFats(e.target.value ? Number(e.target.value) : '')} required />
         </div>
       </div>
-      <div>
+      <div className="min-w-0">
         <button className="btn" disabled={busy}>{busy ? 'Saving…' : 'Save recipe'}</button>
       </div>
     </form>
