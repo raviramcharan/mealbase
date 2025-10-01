@@ -13,18 +13,18 @@ export default function NavBar() {
       <div className="container-narrow py-3 flex items-center justify-between">
         <Link href="/" className="font-extrabold text-xl flex items-center gap-2">
           <span className="inline-grid place-items-center w-7 h-7 rounded-md bg-brand text-white font-bold">🍳</span>
-          RecipeBox
+          Kippieboek
         </Link>
 
         {/* Desktop menu */}
         <div className="hidden md:flex items-center gap-2">
-          {authed && <Link href="/wishlist" className="btn btn-secondary">Wishlist</Link>}
-          {authed && <Link href="/profile" className="btn btn-secondary">Profile</Link>}
-          {authed && <Link href="/recipes/new" className="btn btn-secondary">Add recipe</Link>}
+          {authed && <Link href="/wishlist" className="btn btn-secondary">Favorieten</Link>}
+          {authed && <Link href="/profile" className="btn btn-secondary">Profiel</Link>}
+          {authed && <Link href="/recipes/new" className="btn btn-secondary">Recept toevoegen</Link>}
           {authed ? (
             <button className="btn" onClick={() => signOut()}>Logout</button>
           ) : (
-            <button className="btn" onClick={() => signIn()}>Get Started</button>
+            <button className="btn" onClick={() => signIn()}>Begin hier!</button>
           )}
         </div>
 
@@ -65,13 +65,13 @@ export default function NavBar() {
         </div>
         <nav className="grid gap-2">
           <Link onClick={()=>setOpen(false)} className="btn btn-secondary" href="/">Home</Link>
-          {authed && <Link onClick={()=>setOpen(false)} className="btn btn-secondary" href="/wishlist">Wishlist</Link>}
-          {authed && <Link onClick={()=>setOpen(false)} className="btn btn-secondary" href="/profile">Profile</Link>}
-          {authed && <Link onClick={()=>setOpen(false)} className="btn btn-secondary" href="/recipes/new">Add recipe</Link>}
+          {authed && <Link onClick={()=>setOpen(false)} className="btn btn-secondary" href="/wishlist">Favorieten</Link>}
+          {authed && <Link onClick={()=>setOpen(false)} className="btn btn-secondary" href="/profile">Profiel</Link>}
+          {authed && <Link onClick={()=>setOpen(false)} className="btn btn-secondary" href="/recipes/new">Recept toevoegen</Link>}
           {authed ? (
             <button className="btn mt-2" onClick={() => { setOpen(false); signOut(); }}>Logout</button>
           ) : (
-            <button className="btn mt-2" onClick={() => { setOpen(false); signIn(); }}>Get Started</button>
+            <button className="btn mt-2" onClick={() => { setOpen(false); signIn(); }}>Begin hier!</button>
           )}
         </nav>
       </aside>
