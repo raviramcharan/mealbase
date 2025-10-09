@@ -39,7 +39,7 @@ export default async function Page({ searchParams }: { searchParams: Record<stri
       <section className="relative w-full overflow-hidden bg-white">
         <div className="absolute inset-0 bg-[url('https://res.cloudinary.com/dkekdqp99/image/upload/v1759318239/background-pattern_bhlvje.jpg')] bg-cover bg-center opacity-20" />
         <div className="relative container-narrow py-16 grid gap-4 max-w-3xl">
-          <h1 className="text-5xl font-extrabold leading-tight">De enige echte kippieboek!</h1>
+          <h1 className="text-5xl font-extrabold leading-tight">Jouw receptenboek</h1>
           <p className="text-slate-600">Voeg je favoriete recepten toe zodat je ze nooit meer kwijtraakt!</p>
           <form className="flex gap-2 flex-col md:flex-row" action="/" method="get">
             <input className="flex-1 input border border-slate-200 rounded-xl px-3 py-2" type="search" name="q" placeholder="Search recipes, ingredients or #tags…" defaultValue={q} />
