@@ -13,7 +13,7 @@ export default function NavBar() {
       <div className="container-narrow py-3 flex items-center justify-between">
         <Link href="/" className="font-extrabold text-xl flex items-center gap-2">
           <span className="inline-grid place-items-center w-7 h-7 rounded-md bg-brand text-white font-bold">🍳</span>
-          Kippieboek
+          Receptenboek
         </Link>
 
         {/* Desktop menu */}
